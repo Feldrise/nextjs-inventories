@@ -41,6 +41,40 @@ Grid styling
   .grid { grid-template-columns: repeat(3, 1fr); }
 }
 
+
+/**************** 
+Button styling
+*****************/
+@mixin button($color: colors.$primary, $hover_color: colors.$primary-light) {
+	-webkit-box-shadow: 1px 9px 13px -5px rgba(0,0,0,0.5); 
+	box-shadow: 1px 9px 13px -5px rgba(0,0,0,0.5);
+  padding: 0.5rem 1rem;
+  background-color: $color;
+  color: white;
+  border: none;
+  border-radius: 16px;
+	cursor: pointer;
+
+  &:hover {
+	  -webkit-box-shadow: 1px 14px 13px -8px rgba(0,0,0,0.5); 
+	  box-shadow: 1px 9px 13px -5px rgba(0,0,0,0.5);
+    background-color: $hover_color;
+  }
+}
+
+.btn_primary {
+  @include button;
+  padding: 1rem 2rem;
+}
+
+.btn_floating {
+  @include button;
+  font-size: 32px;
+  position: absolute;
+  right: 16px;    
+  bottom: 16px;
+}
+
 /**************** 
 Card styling
 *****************/
@@ -57,40 +91,29 @@ Card styling
 /** Inventories Cards **/
 .inventoryCard {
   @include card;
+  display: flex;
+  align-items: center;
 	border-left: colors.$primary solid 7px;
+}
+
+.inventoryCardContent {
+  flex: 90%;
+}
+.inventoryCardButton {
+  @include button;
+
+  padding: 1rem 2rem;
+
+  flex: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /** Items Cards **/
 .itemCard {
   @include card;
   border-top: colors.$primary solid 7px;
-}
-
-/**************** 
-Button styling
-*****************/
-@mixin button($color: colors.$primary, $hover_color: colors.$primary-light) {
-	-webkit-box-shadow: 1px 9px 13px -5px rgba(0,0,0,0.5); 
-	box-shadow: 1px 9px 13px -5px rgba(0,0,0,0.5);
-  padding: 0.5rem 1rem;
-  background-color: $color;
-  color: white;
-  border: none;
-  border-radius: 16px;
-
-  &:hover {
-	  -webkit-box-shadow: 1px 14px 13px -8px rgba(0,0,0,0.5); 
-	  box-shadow: 1px 9px 13px -5px rgba(0,0,0,0.5);
-    background-color: $hover_color;
-  }
-}
-
-.btn_floating {
-  @include button;
-  font-size: 32px;
-  position: absolute;
-  right: 16px;    
-  bottom: 16px;
 }
 
 /**************** 
@@ -132,20 +155,22 @@ Loading elements styling
 }
 
 /**************** 
-Footer styling
+Form styling
 *****************/
-.footer {
-  width: 100%;
-  height: 100px;
-  border-top: 1px solid #eaeaea;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.form_group {
+  margin-bottom: 1rem;
 }
 
-.footer a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
+.form_control {
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }

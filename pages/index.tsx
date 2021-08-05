@@ -1,13 +1,15 @@
 import Head from 'next/head';
-import Image from 'next/image';
 
 import InventoryCard from '../components/inventory_card';
 
 import styles from '../styles/utils.module.scss';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
-import { getInventories } from '../services/inventories';
+import { createInventory, getInventories, updateInventory } from '../services/inventories';
+import Modal from '../components/modal';
+import InventoryForm from '../components/forms/inventory_form';
+import { useRouter } from 'next/router';
 
 /**
  * Home: The landing page of the web app
@@ -22,6 +24,15 @@ export default function Home({
 		description: string
 	}[]
 }): JSX.Element {
+
+	const [showModal, setShowModal] = useState(false);
+	const [modalData, setModalData] = useState({});
+	const router = useRouter();
+
+	const refreshData = () => {
+		router.replace(router.asPath);
+	}
+
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -36,30 +47,66 @@ export default function Home({
 				</h1>
 
 				{inventories.map(({ id, name, description }) => (
-					InventoryCard({ id, name, description })
+					InventoryCard({
+						id, name, description, onEdit: () => {
+							setModalData({
+								id: id,
+								name: name,
+								description: description
+							});
+							setShowModal(true);
+						}
+					})
 				))}
 
-				<button className={styles.btn_floating} onClick={onAddInventoryClicked}>+</button>
+				{/* <button className={styles.btn_floating} onClick={onAddInventoryClicked}>+</button> */}
+				<button className={styles.btn_floating} onClick={() => {
+					setModalData({
+						id: null,
+						name: null,
+						description: null
+					});
+					setShowModal(true)
+				}}>+</button>
+
 
 				<div id="spinner" className={styles.loader}>
 					<div className={styles.loading}></div>
 				</div>
 			</main>
 
-			<footer className={styles.footer}>
-				<a
-					href="https://feldrise.com"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Powered by{' '}
-					<span className={styles.logo}>
-						<Image src="/feldrise.svg" alt="Feldrise Logo" width={72} height={16} />
-					</span>
-				</a>
-			</footer>
-		</div >
+			<Modal onClose={() => setShowModal(false)} show={showModal} title={modalData.id == null ? "Add new inventory" : "Edit this inventory"}>
+				<InventoryForm
+					id={modalData.id}
+					name={modalData.name}
+					description={modalData.description}
+					onSubmit={
+						async (event: React.FormEvent) => {
+							setShowModal(false)
+							event.preventDefault();
+							const name = event.target.name.value;
+							const description = event.target.description.value;
+
+							var res = { ok: false };
+
+							if (modalData.id == null) {
+								res = await createInventory(name, description);
+							}
+							else {
+								res = await updateInventory(modalData.id, name, description);
+							}
+
+							document.getElementById('spinner')!.style.display = "none";
+							if (res.ok) {
+								refreshData();
+							}
+						}
+					}
+				/>
+			</Modal>
+		</div>
 	);
+
 }
 
 export const getServerSideProps: GetServerSideProps = async context => {
@@ -81,9 +128,4 @@ export const getServerSideProps: GetServerSideProps = async context => {
 			inventories
 		}, // will be passed to the page component as props
 	}
-}
-
-function onAddInventoryClicked() {
-	document.getElementById('spinner')!.style.display = "block";
-	alert("Hello World");
 }

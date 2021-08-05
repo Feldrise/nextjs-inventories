@@ -74,3 +74,59 @@ export async function getInventories() {
 		data: null
 	};
 };
+
+export async function createInventory(name: string, description: string) {
+	const inventoryData = {
+		name: name,
+		description: description
+	};
+
+	const res = await fetch(
+		"https://inventories.exercises.feldrise.com/api/inventories", {
+		method: 'post',
+		headers: new Headers({
+			'Authorization': 'Bearer ' + userToken,
+			'Content-Type': 'application/json'
+		}),
+		body: JSON.stringify(inventoryData)
+	});
+
+	if (res.status < 300) {
+		return {
+			ok: true
+		}
+	}
+
+	return {
+		ok: false
+	}
+}
+
+
+export async function updateInventory(id: string, name: string, description: string) {
+	const inventoryData = {
+		id: id,
+		name: name,
+		description: description
+	};
+
+	const res = await fetch(
+		"https://inventories.exercises.feldrise.com/api/inventories/" + id, {
+		method: 'put',
+		headers: new Headers({
+			'Authorization': 'Bearer ' + userToken,
+			'Content-Type': 'application/json'
+		}),
+		body: JSON.stringify(inventoryData)
+	});
+
+	if (res.status < 300) {
+		return {
+			ok: true
+		}
+	}
+
+	return {
+		ok: false
+	}
+}
